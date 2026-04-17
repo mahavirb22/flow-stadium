@@ -10,6 +10,7 @@ export default function TopNavBar() {
         <div className="flex justify-between items-center px-8 py-4 max-w-[1440px] mx-auto">
           <div className="flex items-center gap-8">
             <span className="text-2xl font-black tracking-tighter text-primary flex items-center gap-3">
+              <img src="/images/logo.jpg" alt="Flow Logo" className="h-8 w-auto rounded-md shadow-sm" />
               Flow Stadium
               <button
                 onClick={() => setIsGuideOpen(true)}
