@@ -105,8 +105,8 @@ if (process.env.NODE_ENV !== 'test') {
     console.warn('[Server] ⚠ Unhandled rejection (non-fatal):', reason?.message || reason);
   });
 
-  app.listen(PORT, () => {
-    console.log(`[Server] ✓  Listening on http://localhost:${PORT}`);
+  app.listen(PORT, "0.0.0.0", () => {
+    console.log(`[Server] ✓  Listening on http://0.0.0.0:${PORT}`);
 
     // Start simulator AFTER server is listening
     try {
