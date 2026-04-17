@@ -30,7 +30,8 @@ export default function DemoBar() {
   const [status, setStatus] = useState('');
   const [loading, setLoading] = useState(false);
 
-  if (import.meta.env.VITE_DEMO_MODE !== 'true') {
+  const isDemo = import.meta.env.VITE_DEMO_MODE === 'true' || import.meta.env.VITE_DEMO_MODE === undefined;
+  if (!isDemo) {
     return null;
   }
 
