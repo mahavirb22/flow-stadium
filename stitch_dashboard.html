@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Flow Stadium — Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-background": "#191c1e",
+                    "inverse-primary": "#68dbae",
+                    "inverse-surface": "#2d3133",
+                    "on-tertiary-container": "#fffbff",
+                    "secondary-fixed": "#dae2fd",
+                    "surface-dim": "#d8dadc",
+                    "primary": "#00694c",
+                    "on-surface": "#191c1e",
+                    "outline-variant": "#bccac1",
+                    "on-primary": "#ffffff",
+                    "on-tertiary": "#ffffff",
+                    "surface-variant": "#e0e3e5",
+                    "on-secondary-container": "#5c647a",
+                    "on-error-container": "#93000a",
+                    "primary-fixed": "#86f8c9",
+                    "on-secondary": "#ffffff",
+                    "tertiary": "#825100",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container": "#eceef0",
+                    "primary-container": "#008560",
+                    "on-tertiary-fixed": "#2a1700",
+                    "secondary-container": "#dae2fd",
+                    "secondary-fixed-dim": "#bec6e0",
+                    "on-error": "#ffffff",
+                    "surface-container-high": "#e6e8ea",
+                    "on-surface-variant": "#3d4943",
+                    "on-secondary-fixed": "#131b2e",
+                    "primary-fixed-dim": "#68dbae",
+                    "on-tertiary-fixed-variant": "#653e00",
+                    "outline": "#6d7a73",
+                    "error-container": "#ffdad6",
+                    "tertiary-container": "#a36700",
+                    "surface-tint": "#006c4e",
+                    "inverse-on-surface": "#eff1f3",
+                    "secondary": "#565e74",
+                    "on-primary-fixed-variant": "#00513a",
+                    "on-secondary-fixed-variant": "#3f465c",
+                    "tertiary-fixed-dim": "#ffb95f",
+                    "error": "#ba1a1a",
+                    "on-primary-container": "#f5fff7",
+                    "surface-container-highest": "#e0e3e5",
+                    "on-primary-fixed": "#002115",
+                    "tertiary-fixed": "#ffddb8",
+                    "background": "#f7f9fb",
+                    "surface": "#f7f9fb",
+                    "surface-bright": "#f7f9fb",
+                    "surface-container-low": "#f2f4f6"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Inter"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #f7f9fb; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .pulse-ring {
+            box-shadow: 0 0 0 0 rgba(0, 105, 76, 0.4);
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 105, 76, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(0, 105, 76, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 105, 76, 0); }
+        }
+        .stadium-map-gradient {
+            background: radial-gradient(circle at center, #ffffff 0%, #f2f4f6 100%);
+        }
+    </style>
+</head>
+<body class="text-on-background min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<nav class="sticky top-0 w-full z-50 bg-white/80 backdrop-blur-xl shadow-[0px_12px_32px_rgba(15,23,42,0.04)]">
+<div class="flex justify-between items-center px-8 py-4 max-w-[1440px] mx-auto">
+<div class="flex items-center gap-8">
+<span class="text-2xl font-black tracking-tighter text-primary">Flow Stadium</span>
+<div class="hidden md:flex gap-6 font-['Inter'] antialiased tracking-tight text-sm font-medium">
+<a class="text-primary border-b-2 border-primary pb-1" href="#">Dashboard</a>
+<a class="text-slate-600 hover:text-primary transition-colors" href="#">Live Map</a>
+<a class="text-slate-600 hover:text-primary transition-colors" href="#">Logistics</a>
+<a class="text-slate-600 hover:text-primary transition-colors" href="#">Analytics</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2 bg-secondary-container text-on-secondary-container px-3 py-1.5 rounded-full text-xs font-bold tracking-wide">
+<span class="material-symbols-outlined text-sm">confirmation_number</span>
+                    SECTION B7
+                </div>
+<div class="h-10 w-10 rounded-full overflow-hidden border-2 border-primary-fixed">
+<img alt="User Profile" class="h-full w-full object-cover" data-alt="Close-up portrait of a young professional man with a friendly expression and stylish haircut in soft natural lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBYuKCXSnMf8aLqA-iiE_3Gfrj5S3QK82PejxOAmkRZ57Pw9C-dBp-A3j2MMQmOXbddakyIlp_sevKY_-YtFa82rbGBuW-l3oVbsc-6qiYvxrqRt0RfciTwC-_1hGqahgzbUeWeH412Btve3pP1RudW7Us7mptxH_fHd7v5UEZeTOClu8BeXoGc2r1YJMERHK7J8NjzGQ7kwuEbnNXvZglDiPhnfWBkaTuaj5sknurWAYhdujcxtLIt9UMEGSL4vbuP1xOEtSHb2xo"/>
+</div>
+</div>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="flex-grow flex flex-col md:flex-row max-w-[1440px] mx-auto w-full p-8 gap-8">
+<!-- Left Column: Stadium Visualization (40%) -->
+<aside class="w-full md:w-[40%] flex flex-col gap-6">
+<div class="space-y-1">
+<p class="text-xs font-semibold uppercase tracking-widest text-secondary">Current Venue</p>
+<h1 class="text-4xl font-black tracking-tighter text-on-surface">Wankhede Stadium</h1>
+</div>
+<!-- 3D-style SVG Stadium -->
+<div class="flex-grow stadium-map-gradient rounded-3xl border border-outline-variant/15 p-8 relative overflow-hidden flex items-center justify-center min-h-[400px]">
+<!-- Mock SVG Visual -->
+<div class="relative w-full aspect-square max-w-[400px]">
+<svg class="w-full h-full filter drop-shadow-xl" viewbox="0 0 200 200">
+<!-- Outer Rim -->
+<path d="M100 10 A 90 70 0 0 0 100 190 A 90 70 0 0 0 100 10" fill="none" stroke="#bccac1" stroke-dasharray="4 2" stroke-width="1"></path>
+<!-- Section A (Low Density) -->
+<path class="cursor-pointer hover:fill-primary-container transition-all" d="M100 20 A 80 60 0 0 0 30 100 L 60 100 A 40 30 0 0 1 100 40 Z" fill="#00694c" fill-opacity="0.8"></path>
+<text fill="white" font-size="8" font-weight="bold" x="55" y="65">A</text>
+<!-- Section B (High Density - Active) -->
+<path class="cursor-pointer hover:opacity-100 transition-all" d="M30 100 A 80 60 0 0 0 100 180 L 100 140 A 40 30 0 0 1 60 100 Z" fill="#ba1a1a" fill-opacity="0.8"></path>
+<text fill="white" font-size="8" font-weight="bold" x="55" y="145">B</text>
+<circle class="pulse-ring" cx="50" cy="120" fill="#ffffff" r="3"></circle>
+<!-- Section C (Medium) -->
+<path class="cursor-pointer hover:opacity-100 transition-all" d="M100 180 A 80 60 0 0 0 170 100 L 140 100 A 40 30 0 0 1 100 140 Z" fill="#F59E0B" fill-opacity="0.8"></path>
+<text fill="white" font-size="8" font-weight="bold" x="135" y="145">C</text>
+<!-- Section D (Low) -->
+<path class="cursor-pointer hover:opacity-100 transition-all" d="M170 100 A 80 60 0 0 0 100 20 L 100 40 A 40 30 0 0 1 140 100 Z" fill="#00694c" fill-opacity="0.8"></path>
+<text fill="white" font-size="8" font-weight="bold" x="135" y="65">D</text>
+<!-- Field -->
+<ellipse cx="100" cy="100" fill="#eceef0" rx="35" ry="25" stroke="#bccac1" stroke-width="0.5"></ellipse>
+</svg>
+<!-- Interactive Overlays -->
+<div class="absolute bottom-4 left-4 bg-white/90 backdrop-blur-md p-3 rounded-xl border border-outline-variant/20 shadow-sm">
+<div class="flex flex-col gap-2">
+<div class="flex items-center gap-2 text-[10px] font-bold text-secondary">
+<span class="w-2 h-2 rounded-full bg-primary"></span> LOW (0-40%)
+                            </div>
+<div class="flex items-center gap-2 text-[10px] font-bold text-secondary">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span> MED (40-80%)
+                            </div>
+<div class="flex items-center gap-2 text-[10px] font-bold text-secondary">
+<span class="w-2 h-2 rounded-full bg-error"></span> HIGH (80%+)
+                            </div>
+</div>
+</div>
+</div>
+</div>
+</aside>
+<!-- Right Column: Operational Data (60%) -->
+<section class="w-full md:w-[60%] flex flex-col gap-6">
+<!-- Row 1: Match Status Card -->
+<div class="bg-surface-container-lowest rounded-3xl p-6 flex items-center justify-between shadow-[0px_12px_32px_rgba(15,23,42,0.04)] relative overflow-hidden">
+<div class="z-10 flex flex-col">
+<div class="flex items-center gap-2 mb-1">
+<span class="relative flex h-3 w-3">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+<span class="relative inline-flex rounded-full h-3 w-3 bg-primary"></span>
+</span>
+<span class="text-xs font-bold text-primary tracking-widest uppercase">Live Match</span>
+</div>
+<h2 class="text-5xl font-black tracking-tighter text-on-surface">43<span class="animate-pulse">:</span>12</h2>
+<p class="text-sm font-medium text-secondary mt-1">Halftime approaching • Stoppage time pending</p>
+</div>
+<div class="z-10 text-right">
+<p class="text-xs font-bold text-secondary-fixed-dim uppercase tracking-wider mb-2">Current Score</p>
+<div class="flex items-center gap-4">
+<div class="text-center">
+<p class="text-3xl font-black">2</p>
+<p class="text-[10px] font-bold text-secondary uppercase">ENG</p>
+</div>
+<div class="text-2xl font-light text-outline-variant">—</div>
+<div class="text-center">
+<p class="text-3xl font-black">1</p>
+<p class="text-[10px] font-bold text-secondary uppercase">GER</p>
+</div>
+</div>
+</div>
+<!-- Subtle background icon -->
+<span class="material-symbols-outlined absolute -right-4 -bottom-4 text-9xl text-surface-container opacity-20 rotate-12">sports_soccer</span>
+</div>
+<!-- Row 2: Bento Grid (Nudges & Group) -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Latest Nudge (Teal Highlight) -->
+<div class="bg-primary-container text-on-primary-container rounded-3xl p-6 flex flex-col justify-between min-h-[160px]">
+<div>
+<div class="flex items-center gap-2 mb-3">
+<span class="material-symbols-outlined">campaign</span>
+<span class="text-xs font-bold uppercase tracking-widest">Concierge Alert</span>
+</div>
+<h3 class="text-lg font-bold leading-tight">Pre-order drinks for halftime now to skip the queue at North Stand.</h3>
+</div>
+<button class="mt-4 bg-white text-primary text-xs font-black py-2.5 px-4 rounded-xl self-start hover:bg-surface-container-lowest transition-colors uppercase tracking-tight">
+                        Order Now
+                    </button>
+</div>
+<!-- Your Group -->
+<div class="bg-surface-container-low rounded-3xl p-6 flex flex-col justify-between border border-outline-variant/10">
+<div class="flex justify-between items-start mb-4">
+<h3 class="text-xs font-bold uppercase tracking-widest text-secondary">Your Group (4)</h3>
+<span class="material-symbols-outlined text-primary text-xl">group</span>
+</div>
+<div class="flex flex-col gap-3">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full border-2 border-white overflow-hidden">
+<img alt="Sarah" class="w-full h-full object-cover" data-alt="Portrait of a young woman with smiling eyes and long wavy hair outdoors" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBB0qogNuf6-pn2rbpfgglXLcJTjJ669YhG8pcLi81D3FgbMiGQWlr5sSjhOyuOIqe37Ej9FyPiCXFdXztJereZsmYvrAySqiHnfrWIC6dJKIOHAvw53la7etEDk0VZ0ZBUeFAiPFHjIEktZCaHAz3VmmNinblwU3pNAIHl7q6Sh2Z_5AyqQ4iHyEuE5AA3c4fRpm0mJvDwGBNM2uRImL-zZZHmb8UWlLoU9UTQd2p9HZMlswzL7v2DJ2TyrV4IPwVKRr_UQobq3xU"/>
+</div>
+<span class="text-sm font-semibold">Sarah M.</span>
+</div>
+<span class="text-[10px] font-bold px-2 py-1 bg-primary/10 text-primary rounded-md">AT SEAT</span>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full border-2 border-white overflow-hidden bg-surface-variant">
+<img alt="David" class="w-full h-full object-cover" data-alt="Profile of a middle-aged man with short hair and clean-shaven face in professional lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBYN1LO3Esuam7DzlHpSRdEQaQoKIx9M-Gf6df_6H0T7FkVEhAhj7RiVzynh7mKw8idPiGaw5qNvvHrqo7mp0HwwWyw4uGN9ry_NQG5sEVfu2VyeDT5qNgbaCXxSbCh9FX56TcuAN887V1Vsf2rnqPMp2Q7GG1zwuLZO-K4ifvXDIzBbsxqPj4e1Sxe7FK5wi_lfOpe6wf9ZpJZEUE4HhF3sJ8Nvn_M30TeKjvEvD0wZpt_3YECUEgCPkxRbG6KwEPCnStv35Hr-1k"/>
+</div>
+<span class="text-sm font-semibold">David K.</span>
+</div>
+<span class="text-[10px] font-bold px-2 py-1 bg-tertiary/10 text-tertiary rounded-md">CONCOURSE</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Row 3: Live Queue Board (Horizontal Scroll) -->
+<div class="flex flex-col gap-4">
+<div class="flex justify-between items-end px-2">
+<h3 class="text-xs font-bold uppercase tracking-widest text-secondary">Live Facility Wait Times</h3>
+<a class="text-xs font-bold text-primary flex items-center gap-1" href="#">Full Logistics <span class="material-symbols-outlined text-sm">arrow_forward</span></a>
+</div>
+<div class="flex overflow-x-auto gap-4 pb-4 no-scrollbar">
+<!-- Stand 1: Fastest Highlight -->
+<div class="min-w-[180px] bg-white border-2 border-primary rounded-2xl p-4 shadow-sm relative">
+<div class="absolute -top-3 left-4 bg-primary text-white text-[8px] font-black px-2 py-1 rounded-full uppercase">FASTEST</div>
+<p class="text-[10px] font-bold text-secondary uppercase mb-1">East Stand Food</p>
+<h4 class="text-2xl font-black text-on-surface">~2 min</h4>
+<div class="mt-2 w-full bg-surface-container h-1 rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[20%]"></div>
+</div>
+</div>
+<!-- Stand 2 -->
+<div class="min-w-[180px] bg-white border border-outline-variant/20 rounded-2xl p-4 shadow-sm">
+<p class="text-[10px] font-bold text-secondary uppercase mb-1">North Concessions</p>
+<h4 class="text-2xl font-black text-on-surface">~8 min</h4>
+<div class="mt-2 w-full bg-surface-container h-1 rounded-full overflow-hidden">
+<div class="bg-tertiary h-full w-[65%]"></div>
+</div>
+</div>
+<!-- Stand 3 -->
+<div class="min-w-[180px] bg-white border border-outline-variant/20 rounded-2xl p-4 shadow-sm">
+<p class="text-[10px] font-bold text-secondary uppercase mb-1">Main Restrooms</p>
+<h4 class="text-2xl font-black text-on-surface">~12 min</h4>
+<div class="mt-2 w-full bg-surface-container h-1 rounded-full overflow-hidden">
+<div class="bg-error h-full w-[85%]"></div>
+</div>
+</div>
+<!-- Stand 4 -->
+<div class="min-w-[180px] bg-white border border-outline-variant/20 rounded-2xl p-4 shadow-sm">
+<p class="text-[10px] font-bold text-secondary uppercase mb-1">West Stand Bar</p>
+<h4 class="text-2xl font-black text-on-surface">~5 min</h4>
+<div class="mt-2 w-full bg-surface-container h-1 rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[40%]"></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Demo Bar (Amber / Bottom) -->
+<div class="mt-auto w-full bg-tertiary/10 border-t border-tertiary/20 py-3 px-8 flex justify-between items-center">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-tertiary animate-pulse">precision_manufacturing</span>
+<p class="text-xs font-bold text-tertiary uppercase tracking-tight">Intelligence Mode: Active Predictive Analysis (v4.2.1)</p>
+</div>
+<div class="hidden md:flex gap-6">
+<span class="text-[10px] font-bold text-secondary uppercase">API Latency: 12ms</span>
+<span class="text-[10px] font-bold text-secondary uppercase">Last sync: 2s ago</span>
+</div>
+</div>
+<!-- Footer -->
+<footer class="bg-slate-950 w-full">
+<div class="flex flex-col md:flex-row justify-between items-center px-12 py-12 gap-8 max-w-[1440px] mx-auto">
+<div class="flex flex-col items-center md:items-start gap-4">
+<span class="text-lg font-bold text-white">Flow Stadium Intelligence</span>
+<p class="font-['Inter'] text-[10px] uppercase tracking-widest font-semibold text-slate-500">© 2024 Flow Stadium Intelligence. The Digital Concierge.</p>
+</div>
+<div class="flex gap-8 font-['Inter'] text-xs uppercase tracking-widest font-semibold">
+<a class="text-slate-500 hover:text-emerald-400 transition-colors" href="#">Security</a>
+<a class="text-slate-500 hover:text-emerald-400 transition-colors" href="#">Privacy</a>
+<a class="text-slate-500 hover:text-emerald-400 transition-colors" href="#">API</a>
+<a class="text-slate-500 hover:text-emerald-400 transition-colors" href="#">Support</a>
+</div>
+</div>
+</footer>
+</body></html>

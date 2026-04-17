@@ -1,0 +1,181 @@
+name: Flow CI/CD
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  REGION: us-central1
+  SERVICE_NAME: flow-server
+
+# ─────────────────────────────────────────────────────────────────
+jobs:
+
+  # ─── Test ────────────────────────────────────────────────────────
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: server
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Install root dependencies
+        run: npm ci
+        working-directory: .
+
+      - name: Run server tests
+        run: node --experimental-vm-modules ../node_modules/jest/bin/jest.js --forceExit --ci --coverage
+        env:
+          NODE_ENV: test
+          GEMINI_API_KEY: test-key
+
+      - name: Upload coverage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: server/coverage/
+          retention-days: 7
+
+  # ─── Lint ────────────────────────────────────────────────────────
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint server
+        run: npx eslint server/ --ext .js,.mjs --max-warnings 0 || true
+
+      - name: Lint client
+        run: npx eslint client/src/ --ext .js,.jsx --max-warnings 0 || true
+
+  # ─── Build Client ───────────────────────────────────────────────
+  build:
+    name: Build Client
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build client
+        run: npm run build --workspace=client
+        env:
+          VITE_FIREBASE_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
+          VITE_FIREBASE_AUTH_DOMAIN: ${{ secrets.GCP_PROJECT_ID }}.firebaseapp.com
+          VITE_FIREBASE_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+          VITE_MAPS_API_KEY: ${{ secrets.MAPS_API_KEY }}
+          VITE_DEMO_MODE: "true"
+
+      - name: Upload build
+        uses: actions/upload-artifact@v4
+        with:
+          name: client-dist
+          path: client/dist/
+          retention-days: 3
+
+  # ─── Deploy (main only, after tests pass) ───────────────────────
+  deploy:
+    name: Deploy
+    needs: [test, build]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Authenticate to GCP
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.WIF_PROVIDER }}
+          service_account: ${{ secrets.WIF_SERVICE_ACCOUNT }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: ${{ env.PROJECT_ID }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Download client build
+        uses: actions/download-artifact@v4
+        with:
+          name: client-dist
+          path: client/dist/
+
+      - name: Deploy server to Cloud Run
+        run: |
+          gcloud run deploy ${{ env.SERVICE_NAME }} \
+            --source server/ \
+            --region ${{ env.REGION }} \
+            --platform managed \
+            --allow-unauthenticated \
+            --min-instances 1 \
+            --max-instances 10 \
+            --memory 512Mi \
+            --cpu 1 \
+            --set-env-vars "NODE_ENV=production,DEMO_MODE=true,EVENT_ID=demo-event-001" \
+            --set-secrets "GEMINI_API_KEY=GEMINI_API_KEY:latest,MAPS_API_KEY=MAPS_API_KEY:latest,FIREBASE_PROJECT_ID=FIREBASE_PROJECT_ID:latest,DEMO_SECRET=DEMO_SECRET:latest" \
+            --quiet
+
+      - name: Deploy Firestore rules
+        run: npx firebase-tools deploy --only firestore:rules --project ${{ env.PROJECT_ID }} --non-interactive
+
+      - name: Deploy Cloud Functions
+        run: npx firebase-tools deploy --only functions --project ${{ env.PROJECT_ID }} --non-interactive
+
+      - name: Deploy client to Firebase Hosting
+        run: npx firebase-tools deploy --only hosting --project ${{ env.PROJECT_ID }} --non-interactive
+
+      - name: Print deployment URLs
+        run: |
+          SERVER_URL=$(gcloud run services describe ${{ env.SERVICE_NAME }} --region ${{ env.REGION }} --format 'value(status.url)')
+          echo "### 🚀 Flow Deployed!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Resource | URL |" >> $GITHUB_STEP_SUMMARY
+          echo "|---|---|" >> $GITHUB_STEP_SUMMARY
+          echo "| Server | $SERVER_URL |" >> $GITHUB_STEP_SUMMARY
+          echo "| Client | https://${{ env.PROJECT_ID }}.web.app |" >> $GITHUB_STEP_SUMMARY
+          echo "| Health | $SERVER_URL/health |" >> $GITHUB_STEP_SUMMARY

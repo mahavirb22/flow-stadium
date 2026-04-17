@@ -1,0 +1,24 @@
+{
+  "name": "Flow",
+  "short_name": "Flow",
+  "description": "Predictive stadium ambient intelligence — the stadium thinks, the attendee just enjoys the game.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#1D9E75",
+  "background_color": "#0b1120",
+  "categories": ["sports", "entertainment"],
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

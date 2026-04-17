@@ -1,0 +1,27 @@
+{
+  "name": "flow-server",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node --env-file=../.env --watch index.js",
+    "start": "node --env-file=../.env index.js",
+    "test": "node --experimental-vm-modules node_modules/.bin/jest --forceExit --detectOpenHandles"
+  },
+  "dependencies": {
+    "@google-cloud/pubsub": "^4.9.0",
+    "@google/generative-ai": "^0.21.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.1",
+    "express-rate-limit": "^7.4.1",
+    "express-validator": "^7.2.0",
+    "firebase-admin": "^13.0.0",
+    "googleapis": "^144.0.0",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "supertest": "^7.0.0"
+  }
+}

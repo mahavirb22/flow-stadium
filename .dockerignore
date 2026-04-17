@@ -1,0 +1,14 @@
+node_modules
+client/node_modules
+server/node_modules
+functions/node_modules
+client/dist
+.git
+.github
+.env
+*.md
+infra/
+stitch_*.html
+server/tests/
+server/test-errors.txt
+server/jest.config.js
