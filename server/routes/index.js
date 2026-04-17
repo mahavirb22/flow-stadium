@@ -276,5 +276,69 @@ router.post('/ingest/match', zodValidate(IngestMatchSchema), async (req, res) =>
   }
 });
 
+// ─── GET /api/incidents ──────────────────────────────────────────
+// Returns active incidents for the event.
+
+router.get('/api/incidents', async (req, res) => {
+  try {
+    const eventId = req.query.eventId || EVENT_ID;
+    const cacheKey = `incidents:${eventId}`;
+
+    const cached = cache.get(cacheKey);
+    if (cached) {
+      res.set('X-Cache', 'HIT');
+      return res.json(cached);
+    }
+
+    const incidentsSnap = await db.collection('events').doc(eventId)
+      .collection('incidents')
+      .where('resolved', '==', false)
+      .orderBy('timestamp', 'desc')
+      .limit(20)
+      .get();
+
+    const incidents = [];
+    incidentsSnap.forEach(doc => {
+      incidents.push({ id: doc.id, ...doc.data() });
+    });
+
+    const payload = { eventId, incidents };
+    cache.set(cacheKey, payload, 30); // Short cache for incidents
+    res.set('X-Cache', 'MISS');
+    res.json(payload);
+  } catch (err) {
+    console.error('[Routes] /api/incidents error:', err.message);
+    res.status(500).json({ error: 'Failed to fetch incidents' });
+  }
+});
+
+// ─── POST /api/incidents ─────────────────────────────────────────
+
+const { IngestIncidentSchema } = await import('../schemas.js');
+
+router.post('/api/incidents', zodValidate(IngestIncidentSchema), async (req, res) => {
+  try {
+    const { type, description, severity, zone, eventId = EVENT_ID } = req.validated;
+    
+    const incidentDoc = {
+      type,
+      description,
+      severity,
+      zone,
+      timestamp: FieldValue.serverTimestamp(),
+      resolved: false,
+      reportedBy: 'command_center'
+    };
+
+    const ref = await db.collection('events').doc(eventId).collection('incidents').add(incidentDoc);
+    cache.invalidate(`incidents:${eventId}`);
+    
+    res.json({ success: true, id: ref.id });
+  } catch (err) {
+    console.error('[Routes] POST /api/incidents error:', err.message);
+    res.status(500).json({ error: 'Failed to report incident' });
+  }
+});
+
 export default router;
 

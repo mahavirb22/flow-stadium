@@ -11,20 +11,62 @@ const commentaryData = [
   { time: "10.0 Ov", text: "Halfway through the innings. The batting side needs to accelerate.", type: "event" }
 ];
 
-export default function CommandCenterPanel() {
+export default function CommandCenterPanel({ eventId = 'demo-event-001' }) {
   const [activeCommentary, setActiveCommentary] = useState([]);
+  const [stats, setStats] = useState({ capacity: '33,108', temp: '31°C', weather: 'Sunny' });
+  const [isReporting, setIsReporting] = useState(false);
+
+  const fetchIncidents = async () => {
+    try {
+      const res = await fetch(`/api/incidents?eventId=${eventId}`);
+      if (!res.ok) throw new Error('Fetch failed');
+      const data = await res.json();
+      
+      // Transform Firestore incidents to display format
+      const formatted = data.incidents.map(inc => ({
+        time: inc.timestamp ? new Date(inc.timestamp._seconds * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Just Now',
+        text: inc.description,
+        type: inc.severity === 'critical' || inc.severity === 'high' ? 'highlight' : 'info'
+      }));
+      
+      setActiveCommentary(formatted);
+    } catch (err) {
+      console.warn('[CommandCenter] Live sync error:', err.message);
+    }
+  };
+
+  const reportAnomaly = async () => {
+    setIsReporting(true);
+    try {
+      const payload = {
+        type: 'manual_report',
+        description: 'Manual crowd check requested at West Wing',
+        severity: 'medium',
+        zone: 'West Wing',
+        eventId
+      };
+
+      const res = await fetch('/api/incidents', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (res.ok) {
+        await fetchIncidents();
+      }
+    } catch (err) {
+      console.error('[CommandCenter] Reporting failed:', err);
+    } finally {
+      setIsReporting(false);
+    }
+  };
 
   useEffect(() => {
-    // Staggered reveal to simulate live commentary arriving
-    let count = 0;
-    const interval = setInterval(() => {
-      count++;
-      setActiveCommentary(commentaryData.slice(0, count).reverse());
-      if (count >= commentaryData.length) clearInterval(interval);
-    }, 2500);
-    
+    fetchIncidents();
+    const interval = setInterval(fetchIncidents, 5000);
     return () => clearInterval(interval);
-  }, []);
+  }, [eventId]);
 
   return (
     <div className="w-full md:w-[380px] flex flex-col h-full bg-[#fcfcfc] border border-outline-variant rounded-[32px] overflow-hidden shadow-[0_12px_32px_rgba(15,23,42,0.04)] font-['Inter'] relative isolate">
@@ -46,18 +88,21 @@ export default function CommandCenterPanel() {
         <div className="grid grid-cols-2 gap-4">
           <div className="flex flex-col bg-white p-3 rounded-2xl border border-blue-50 shadow-sm">
             <span className="text-[9px] uppercase text-slate-400 font-bold tracking-widest mb-1 items-center flex gap-1">🏟 Capacity</span>
-            <span className="text-xl font-black text-slate-800 tracking-tight">33,108</span>
+            <span className="text-xl font-black text-slate-800 tracking-tight">{stats.capacity}</span>
           </div>
           <div className="flex flex-col bg-white p-3 rounded-2xl border border-blue-50 shadow-sm">
             <span className="text-[9px] uppercase text-slate-400 font-bold tracking-widest mb-1 items-center flex gap-1">☁ Weather</span>
-            <span className="text-xl font-black text-slate-800 tracking-tight">31°C <span className="text-sm font-medium text-slate-400">Sunny</span></span>
+            <span className="text-xl font-black text-slate-800 tracking-tight">{stats.temp} <span className="text-sm font-medium text-slate-400">{stats.weather}</span></span>
           </div>
         </div>
         
-        <div className="flex flex-col bg-white p-3 rounded-2xl border border-blue-50 shadow-sm">
-          <span className="text-[9px] uppercase text-slate-400 font-bold tracking-widest mb-1">Pitch Condition</span>
-          <span className="text-sm font-semibold text-slate-700">Dry & Dusty — Significant turn expected towards the final overs.</span>
-        </div>
+        <button 
+          onClick={reportAnomaly}
+          disabled={isReporting}
+          className="w-full py-3 bg-slate-900 text-white rounded-2xl font-bold text-sm hover:bg-slate-800 transition-colors shadow-lg active:scale-95 disabled:opacity-50"
+        >
+          {isReporting ? 'Transmitting...' : 'Report Manual Anomaly'}
+        </button>
       </div>
 
       {/* Match Commentary Feed */}

@@ -9,8 +9,37 @@ const pitchZones = [
   { id: 'z6', name: 'Center Pitch', active: true, density: '12%', color: 'from-purple-500/80 to-fuchsia-400/60' }
 ];
 
-export default function LivePitchView() {
+export default function LivePitchView({ eventId = 'demo-event-001' }) {
   const [activeZone, setActiveZone] = useState(null);
+  const [zones, setZones] = useState(pitchZones);
+
+  const fetchCrowdData = async () => {
+    try {
+      const res = await fetch(`/api/crowd?eventId=${eventId}`);
+      if (!res.ok) throw new Error('Fetch failed');
+      const data = await res.json();
+      
+      // Merge live data with zone definitions
+      const updatedZones = pitchZones.map(staticZone => {
+        const liveData = data.zones.find(z => z.zone.toLowerCase().includes(staticZone.name.toLowerCase().split(' ')[0].toLowerCase()));
+        return {
+          ...staticZone,
+          density: liveData ? `${Math.round(liveData.density * 100)}%` : staticZone.density,
+          active: liveData ? liveData.density > 0.8 : staticZone.active
+        };
+      });
+      
+      setZones(updatedZones);
+    } catch (err) {
+      console.warn('[LivePitch] Crowd sync error:', err.message);
+    }
+  };
+
+  useEffect(() => {
+    fetchCrowdData();
+    const interval = setInterval(fetchCrowdData, 10000); // Slower polling for crowd
+    return () => clearInterval(interval);
+  }, [eventId]);
 
   return (
     <div className="w-full h-full min-h-[500px] flex items-center justify-center bg-slate-900 overflow-hidden relative font-['Inter'] rounded-3xl isolate shadow-inner">
@@ -39,7 +68,7 @@ export default function LivePitchView() {
           
           {/* Interactive Zones */}
           <div className="absolute inset-x-[-20%] inset-y-[-10%] grid grid-cols-2 grid-rows-3 gap-6 p-4">
-            {pitchZones.map((zone) => (
+            {zones.map((zone) => (
               <div 
                 key={zone.id}
                 onMouseEnter={() => setActiveZone(zone)}
@@ -48,7 +77,7 @@ export default function LivePitchView() {
               >
                 <div 
                   className={`absolute inset-0 rounded-[40px] bg-gradient-to-br transition-all duration-500 ease-out border border-white/10 ${zone.color} mix-blend-screen
-                    ${activeZone?.id === zone.id ? 'opacity-100 scale-105' : 'opacity-40 scale-100 blur-[2px]'}`}
+                    ${activeZone?.id === zone.id || zone.active ? 'opacity-100 scale-105 shadow-[0_0_30px_rgba(255,255,255,0.1)]' : 'opacity-30 scale-100 blur-[2px]'}`}
                 ></div>
                 
                 {/* Hotspot Dot */}
@@ -70,8 +99,8 @@ export default function LivePitchView() {
             <div className="flex justify-between items-start">
               <h3 className="text-white font-bold tracking-wide">{activeZone.name}</h3>
               <span className={`text-[10px] uppercase font-bold tracking-wider px-2 py-1 rounded border
-                ${activeZone.active ? 'bg-red-500/20 text-red-300 border-red-500/30' : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'}`}>
-                {activeZone.active ? 'High Alert' : 'Normal'}
+                ${zoneAlert(activeZone) ? 'bg-red-500/20 text-red-300 border-red-500/30' : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'}`}>
+                {zoneAlert(activeZone) ? 'High Alert' : 'Normal'}
               </span>
             </div>
             
@@ -88,4 +117,8 @@ export default function LivePitchView() {
 
     </div>
   );
+}
+
+function zoneAlert(zone) {
+    return zone.active || parseInt(zone.density) > 80;
 }

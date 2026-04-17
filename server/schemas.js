@@ -39,10 +39,20 @@ export const MatchEventSchema = z.object({
   timestamp: z.string().optional(),
 });
 
+// ─── Incident Report ───────────────────────────────────────────
+export const IncidentSchema = z.object({
+  type: z.string().min(1).max(32),
+  description: z.string().min(1).max(256),
+  severity: z.enum(['low', 'medium', 'high', 'critical']),
+  zone: z.string().min(1).max(64),
+  eventId: z.string().min(1).max(128).optional(),
+});
+
 // ─── Ingest Payload (REST API) ──────────────────────────────────
 export const IngestCrowdSchema = CrowdUpdateSchema;
 export const IngestQueueSchema = QueueUpdateSchema;
 export const IngestMatchSchema = MatchEventSchema;
+export const IngestIncidentSchema = IncidentSchema;
 
 /**
  * Express middleware factory — validates req.body against a Zod schema.
