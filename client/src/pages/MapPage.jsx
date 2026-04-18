@@ -2,6 +2,14 @@ import React from 'react';
 import LivePitchView from '../components/LivePitchView';
 import CommandCenterPanel from '../components/CommandCenterPanel';
 
+/**
+ * MapPage Component
+ * 
+ * Serves as the primary layout wrapper for the Interactive Pitch Map 
+ * and the Live Command Center panel. Manages core layout styling.
+ * 
+ * @returns {JSX.Element} The rendered MapPage component layout
+ */
 export default function MapPage() {
   const eventId = 'demo-event-001'; // Fallback event ID used primarily across the app
 

@@ -10,6 +10,12 @@ import { useState } from 'react';
 const DEMO_API = import.meta.env.VITE_DEMO_API || '';
 const DEMO_SECRET = import.meta.env.VITE_DEMO_SECRET || 'flow-demo-2026';
 
+/**
+ * Executes a state-altering demo action securely parsing API payload.
+ *
+ * @param {string} endpoint - The demo interaction endpoint
+ * @returns {Promise<{ok: boolean, data: any}>} Response structure and data body
+ */
 async function demoFetch(endpoint) {
   try {
     const res = await fetch(`${DEMO_API}/demo/${endpoint}`, {
@@ -26,6 +32,14 @@ async function demoFetch(endpoint) {
   }
 }
 
+/**
+ * DemoBar Component
+ *
+ * Exposes internal administrative capabilities safely only during DEMO execution context.
+ * Useful for showcasing dynamic reactive events across connected Flow dashboards.
+ *
+ * @returns {JSX.Element|null} The mounted DemoBar control panel or null based on environment
+ */
 export default function DemoBar() {
   const [status, setStatus] = useState('');
   const [loading, setLoading] = useState(false);
@@ -83,7 +97,7 @@ export default function DemoBar() {
       </button>
 
       {status && (
-        <span style={styles.status} role="status" aria-live="polite">
+        <span style={styles.status} role="status" aria-live="assertive">
           {status}
         </span>
       )}

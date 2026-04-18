@@ -8,6 +8,11 @@
 import { z } from 'zod';
 
 // ─── Crowd Update ───────────────────────────────────────────────
+/**
+ * Zod schema validating inbound crowd metrics.
+ * Enforces strict thresholds (0.0 to 1.0) and zone identification formatting.
+ * @type {import('zod').ZodObject}
+ */
 export const CrowdUpdateSchema = z.object({
   zone: z.string().min(1).max(10),
   density: z.number().min(0).max(1),
@@ -16,6 +21,11 @@ export const CrowdUpdateSchema = z.object({
 });
 
 // ─── Queue Update ───────────────────────────────────────────────
+/**
+ * Zod schema validating concessional and ingress/egress queue measurements.
+ * Wait minutes are bounded strictly <= 120 ensuring data fidelity.
+ * @type {import('zod').ZodObject}
+ */
 export const QueueUpdateSchema = z.object({
   standId: z.string().min(1).max(64),
   standName: z.string().min(1).max(128).optional(),
@@ -56,7 +66,10 @@ export const IngestIncidentSchema = IncidentSchema;
 
 /**
  * Express middleware factory — validates req.body against a Zod schema.
- * Returns 400 with structured errors if validation fails.
+ * Returns 400 with structured errors if validation fails securely avoiding unhandled input.
+ *
+ * @param {import('zod').ZodSchema} schema - The target Zod validation schema definition
+ * @returns {import('express').RequestHandler} Configured Express validation middleware function
  */
 export function zodValidate(schema) {
   return (req, res, next) => {

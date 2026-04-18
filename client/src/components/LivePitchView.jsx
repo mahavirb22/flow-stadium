@@ -9,6 +9,16 @@ const pitchZones = [
   { id: 'z6', name: 'Center Pitch', active: true, density: '12%', color: 'from-purple-500/80 to-fuchsia-400/60' }
 ];
 
+/**
+ * LivePitchView Component
+ * 
+ * Renders an interactive 3D CSS pitch map displaying real-time crowd density
+ * visualizations. Periodically polls the server for density updates.
+ * 
+ * @param {Object} props
+ * @param {string} [props.eventId='demo-event-001'] - The event ID used to fetch crowd data
+ * @returns {JSX.Element} The rendered 3D pitch view visualization
+ */
 export default function LivePitchView({ eventId = 'demo-event-001' }) {
   const [activeZone, setActiveZone] = useState(null);
   const [zones, setZones] = useState(pitchZones);
@@ -119,6 +129,14 @@ export default function LivePitchView({ eventId = 'demo-event-001' }) {
   );
 }
 
+/**
+ * Helper function to determine if a specific pitch zone is actively in alert.
+ * 
+ * @param {Object} zone - The zone object containing status and density metrics
+ * @param {boolean} zone.active - The manual active override boolean
+ * @param {string} zone.density - The current density percentage string (e.g. "85%")
+ * @returns {boolean} True if the zone requires heightened security attention
+ */
 function zoneAlert(zone) {
     return zone.active || parseInt(zone.density) > 80;
 }

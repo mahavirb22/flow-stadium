@@ -2,6 +2,12 @@ import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 
+/**
+ * firebase.js
+ * 
+ * Initializes the Firebase v9 Modular SDK for the Flow frontend.
+ * Exports active Auth and Firestore unified instances for direct usage.
+ */
 const firebaseConfig = {
   apiKey: "AIzaSyA3AHLWJ31t8UbsR31Of6_vHKwyavtJh0E",
   authDomain: "annapurna-hackathon.firebaseapp.com",

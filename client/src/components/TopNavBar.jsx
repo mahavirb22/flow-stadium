@@ -1,6 +1,13 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 
+/**
+ * TopNavBar Component
+ * Renders the top navigation header including stadium branding, routing links,
+ * user profile, and an interactive system guide modal.
+ *
+ * @returns {JSX.Element} The rendered TopNavBar component
+ */
 export default function TopNavBar() {
   const [isGuideOpen, setIsGuideOpen] = useState(false);
 
@@ -10,10 +17,12 @@ export default function TopNavBar() {
         <div className="flex justify-between items-center px-8 py-4 max-w-[1440px] mx-auto">
           <div className="flex items-center gap-8">
             <span className="text-2xl font-black tracking-tighter text-primary flex items-center gap-3">
-              <img src="/images/logo.jpg" alt="Flow Logo" className="h-8 w-auto rounded-md shadow-sm" />
+              <img src="/images/logo.jpg" alt="Flow Stadium Primary Logo" className="h-8 w-auto rounded-md shadow-sm" />
               Flow Stadium
               <button
                 onClick={() => setIsGuideOpen(true)}
+                aria-expanded={isGuideOpen}
+                aria-controls="guide-modal"
                 className="text-[10px] px-3 py-1 bg-emerald-50 text-emerald-700 rounded-full hover:bg-emerald-100 transition-colors border border-emerald-200 shadow-sm flex items-center gap-1 uppercase tracking-widest cursor-pointer"
               >
                 <span>Guide</span>
@@ -41,10 +50,10 @@ export default function TopNavBar() {
       {/* Guide Modal Overlay */}
       {isGuideOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm" style={{ animation: 'fadeIn 0.2s ease-out forwards' }}>
-          <div className="bg-white max-w-2xl w-full rounded-[32px] shadow-2xl overflow-hidden border border-slate-200" style={{ animation: 'fadeSlideUp 0.3s ease-out forwards' }}>
+          <div id="guide-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" className="bg-white max-w-2xl w-full rounded-[32px] shadow-2xl overflow-hidden border border-slate-200" style={{ animation: 'fadeSlideUp 0.3s ease-out forwards' }}>
             {/* Modal Header */}
             <div className="px-8 py-5 flex items-center justify-between border-b border-slate-100">
-              <h2 className="text-xl font-bold tracking-tight text-slate-800">Flow Software Guide</h2>
+              <h2 id="modal-title" className="text-xl font-bold tracking-tight text-slate-800">Flow Software Guide</h2>
               <button
                 onClick={() => setIsGuideOpen(false)}
                 className="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 transition-colors font-bold"

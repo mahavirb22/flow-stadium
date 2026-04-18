@@ -1,21 +1,24 @@
 import React, { useState, useEffect } from 'react';
 
-const commentaryData = [
-  { time: "Match Started", text: "Welcome to the Wankhede Stadium for this highly anticipated playoff match!", type: "info" },
-  { time: "2.1 Ov", text: "CRACKING SHOT! That's gone for a massive six over mid-wicket.", type: "highlight" },
-  { time: "2.4 Ov", text: "Appeal for LBW, umpire says no. Good tight bowling in this over.", type: "commentary" },
-  { time: "4.0 Ov", text: "End of the over. The crowd is absolutely electric today.", type: "event" },
-  { time: "5.3 Ov", text: "WICKET! Clean bowled. The crowd goes silent as the fast bowler strikes.", type: "highlight" },
-  { time: "7.0 Ov", text: "Strategic timeout. Ground staff are bringing out the drinks.", type: "info" },
-  { time: "8.2 Ov", text: "A quick single taken. The runners are looking sharp.", type: "commentary" },
-  { time: "10.0 Ov", text: "Halfway through the innings. The batting side needs to accelerate.", type: "event" }
-];
-
+/**
+ * CommandCenterPanel Component
+ * 
+ * Subscribes to the live Firebase incident stream via the Node.js ingestion backend.
+ * Provides real-time venue environmental metrics and live play-by-play anomaly logs.
+ * 
+ * @param {Object} props
+ * @param {string} [props.eventId='demo-event-001'] - The unique identifier for the live event
+ * @returns {JSX.Element} The active Command Center sidebar panel
+ */
 export default function CommandCenterPanel({ eventId = 'demo-event-001' }) {
   const [activeCommentary, setActiveCommentary] = useState([]);
   const [stats, setStats] = useState({ capacity: '33,108', temp: '31°C', weather: 'Sunny' });
   const [isReporting, setIsReporting] = useState(false);
 
+  /**
+   * Periodically fetches incident logs from the backend API,
+   * parsing raw Firebase Timestamp data into readable formats.
+   */
   const fetchIncidents = async () => {
     try {
       const res = await fetch(`/api/incidents?eventId=${eventId}`);
@@ -35,6 +38,10 @@ export default function CommandCenterPanel({ eventId = 'demo-event-001' }) {
     }
   };
 
+  /**
+   * Triggers a manual anomaly report using the simulated API,
+   * instantly validating the ingest architecture.
+   */
   const reportAnomaly = async () => {
     setIsReporting(true);
     try {
