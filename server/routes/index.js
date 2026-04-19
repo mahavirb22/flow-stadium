@@ -13,7 +13,7 @@ import { validateGroupJoin, validateSeatUpdate } from '../middleware/validate.js
 import cache from '../services/cacheService.js';
 import analytics from '../services/analyticsService.js';
 import { requireSensorAuth } from '../middleware/sensorAuth.js';
-import { zodValidate, IngestCrowdSchema, IngestQueueSchema, IngestMatchSchema } from '../schemas.js';
+import { zodValidate, IngestCrowdSchema, IngestQueueSchema, IngestMatchSchema, IngestIncidentSchema } from '../schemas.js';
 
 const router = Router();
 const db = getFirestore();
@@ -313,8 +313,6 @@ router.get('/api/incidents', async (req, res) => {
 });
 
 // ─── POST /api/incidents ─────────────────────────────────────────
-
-const { IngestIncidentSchema } = await import('../schemas.js');
 
 router.post('/api/incidents', zodValidate(IngestIncidentSchema), async (req, res) => {
   try {

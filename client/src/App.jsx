@@ -20,6 +20,15 @@ import TopNavBar from './components/TopNavBar';
 
 const EVENT_ID = 'demo-event-001';
 
+/**
+ * AppContent Component
+ * 
+ * Provides internal routing layout and integrates the floating notification prompt.
+ * 
+ * @param {Object} props
+ * @param {string|null} props.uid - The unique Firebase generated anonymous User ID
+ * @returns {JSX.Element} Global router content with nav elements
+ */
 function AppContent({ uid }) {
   const [fcmStatus, setFcmStatus] = useState('idle');
 
@@ -78,6 +87,14 @@ function AppContent({ uid }) {
   );
 }
 
+/**
+ * App Component
+ * 
+ * Entry point enforcing Firebase anonymous browser authentication before rendering.
+ * Provides fallback UI while the user socket is initialized.
+ * 
+ * @returns {JSX.Element} The initialized Router wrapper
+ */
 function App() {
   const [uid, setUid] = useState(null);
   const [authReady, setAuthReady] = useState(false);

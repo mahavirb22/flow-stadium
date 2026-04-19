@@ -13,7 +13,7 @@ import { doc, setDoc } from 'firebase/firestore';
 import app, { db } from '../firebase';
 
 // ─── Constants ──────────────────────────────────────────────────
-const VAPID_KEY = 'BORBRNCkEZRH-TVE2QxmYwz7wtGZBbk3S_182yy2Ve_7I1fjvuXRci2LiJGzp93pzMHZAI9DJmRUCiArC1GoYU8';
+const VAPID_KEY = import.meta.env.VITE_FIREBASE_VAPID_KEY || 'BORBRNCkEZRH-TVE2QxmYwz7wtGZBbk3S_182yy2Ve_7I1fjvuXRci2LiJGzp93pzMHZAI9DJmRUCiArC1GoYU8';
 
 // ─── Init FCM ───────────────────────────────────────────────────
 
