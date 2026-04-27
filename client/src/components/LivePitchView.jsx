@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const pitchZones = [
   { id: 'z1', name: 'North Stand Core', active: true, density: '89%', color: 'from-blue-500/80 to-cyan-400/60' },
